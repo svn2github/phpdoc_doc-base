@@ -1,0 +1,236 @@
+#
+# +----------------------------------------------------------------------+
+# | PHP Version 4.0                                                      |
+# +----------------------------------------------------------------------+
+# | Copyright (c) 1997-2001 The PHP Group                                |
+# +----------------------------------------------------------------------+
+# | This source file is subject to version 2.02 of the PHP licience,     |
+# | that is bundled with this package in the file LICENCE and is         |
+# | avalible through the world wide web at                               |
+# | http://www.php.net/license/2_02.txt.                                 |
+# | If uou did not receive a copy of the PHP license and are unable to   |
+# | obtain it through the world wide web, please send a note to          |
+# | license@php.net so we can mail you a copy immediately                |
+# +----------------------------------------------------------------------+
+# | Authors: Stig Bakken <ssb@fast.no>                                   |
+# +----------------------------------------------------------------------+
+#
+
+#
+# $Id$
+#
+
+VPATH=@srcdir@
+srcdir=@srcdir@
+PHP_SOURCE=@PHP_SOURCE@
+LANG=@LANG@
+JADE=@JADE@ -wno-idref
+NSGMLS=@NSGMLS@
+
+CATALOG=@CATALOG@
+
+VERSION="@PHP_VERSION@"
+HTML_STYLESHEET=html.dsl
+PHPWEB_STYLESHEET=phpweb.dsl
+HOWTO_STYLESHEET=howto.dsl
+PRINT_STYLESHEET=print.dsl
+QUICKREF_STYLESHEET=quickref.dsl
+KDEVELOP_TOC_STYLESHEET=kdevelop_toc.dsl
+
+HTML_DEPS=$(HTML_STYLESHEET) html-common.dsl html-locale.dsl common.dsl
+HOWTO_DEPS=$(HOWTO_STYLESHEET) html-common.dsl html-locale.dsl common.dsl howto/howto.ent
+PRINT_DEPS=$(PRINT_STYLESHEET) common.dsl
+PHPWEB_DEPS=$(PHPWEB_STYLESHEET) html-common.dsl common.dsl
+QUICKREF_DEPS=quickref.dsl Makefile
+KDEVELOP_TOC_DEPS=kdevelop_toc.dsl Makefile
+
+PALMDOCTITLE=@PALMDOCTITLE@
+
+all: html
+
+DIST_FILES=@MANUAL@.zip @MANUAL@.tar.gz @MANUAL@.tar.bz2 \
+	@MANUAL@.html.gz @MANUAL@.txt.gz @MANUAL@.doc.pdb
+MIRROR_TARGETS=php/index.php html/index.html $(DIST_FILES)
+PDF_FILES=@MANUAL@.pdf.gz @MANUAL@.pdf.bz2 @MANUAL@.pdf.zip
+
+html.dsl: $(srcdir)/html.dsl.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+print.dsl: $(srcdir)/print.dsl.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+phpweb.dsl: $(srcdir)/phpweb.dsl.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+common.dsl: $(srcdir)/common.dsl.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+manual.xml: $(srcdir)/manual.xml.in .manual.xml
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+.manual.xml: $(DEPEND_FILES) global.ent
+	touch .manual.xml
+
+html: html/index.html
+bightml: @MANUAL@.html
+phpweb: php/index.php
+rtf: @MANUAL@.rtf
+tex latex: @MANUAL@.tex
+dvi: @MANUAL@.dvi
+ps: @MANUAL@.ps
+pdf: @MANUAL@.pdf
+howto: howto/html/index.html
+howtotgz: howto/howto.html.tar.gz
+
+FORCE:
+
+funclist.txt: FORCE
+	$(srcdir)/genfunclist $(PHP_SOURCE) > funclist.txt
+
+funcsummary.txt: FORCE
+	$(srcdir)/genfuncsummary $(PHP_SOURCE) > funcsummary.txt
+
+revcheck.html: FORCE
+	PHPDOCDIR=$(srcdir) php -f $(srcdir)/scripts/revcheck.php $(LANG) > revcheck.html
+
+Makefile: $(srcdir)/Makefile.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+checkdoc: $(srcdir)/checkdoc.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+mirror-files: $(MIRROR_TARGETS)
+extra-mirror-files: $(PDF_FILES)
+
+snapshot: manual-snapshot.tar.gz
+
+manual-snapshot.tar.gz: @MANUAL@.html html/index.html @MANUAL@.rtf @MANUAL@.txt
+	tar -cvzf $@ @MANUAL@.html html/*.html @MANUAL@.rtf @MANUAL@.txt
+
+status: checkdoc ./funclist.txt
+	./checkdoc -s > status.txt
+	./checkdoc -m > missing.txt
+
+summary: ./funcsummary.txt
+
+quickref: quickref.txt
+quickref.txt: manual.xml $(QUICKREF_DEPS)
+	$(JADE) $(CATALOG) -d $(QUICKREF_STYLESHEET) -V nochunks -t sgml $(srcdir)/phpdocxml.dcl manual.xml | sed -e 's/   */ /g' | sort -f > quickref.txt
+
+kdevelop_toc: php.toc
+php.toc: manual.xml $(KDEVELOP_TOC_DEPS)
+	echo '<!DOCTYPE gideontoc>' > $@
+	$(JADE) $(CATALOG) -d $(KDEVELOP_TOC_STYLESHEET) -V nochunks -t sgml $(srcdir)/phpdocxml.dcl manual.xml | sed -e's/\& /\&amp; /g' >> $@
+
+makedoc: $(srcdir)/makedoc.cc
+	g++ -o makedoc $(srcdir)/makedoc.cc
+
+@MANUAL@.html: manual.xml $(HTML_DEPS)
+	$(JADE) $(CATALOG) -V nochunks -d $(HTML_STYLESHEET) -t sgml $(srcdir)/phpdocxml.dcl manual.xml > $@
+
+@MANUAL@.html.gz: @MANUAL@.html
+	gzip -9 -c $< > $@
+
+@MANUAL@.rtf.gz: @MANUAL@.rtf
+	gzip -9 -c $< > $@
+
+@MANUAL@.txt.gz: @MANUAL@.txt
+	gzip -9 -c $< > $@
+
+@MANUAL@.tex: manual.xml
+	$(JADE) $(CATALOG) -d $(PRINT_STYLESHEET) -t tex $(srcdir)/phpdocxml.dcl $<
+	mv manual.tex $@
+
+@MANUAL@.pdf: @MANUAL@.dvi
+	dvipdfm -o @MANUAL@.pdf -p @PDF_PAPER_TYPE@ @MANUAL@.dvi
+
+@MANUAL@.pdf.gz: @MANUAL@.pdf
+	gzip -9 -c $< > $@
+
+@MANUAL@.pdf.bz2: @MANUAL@.pdf
+	bzip2 -9 -c $< > $@
+
+@MANUAL@.pdf.zip: @MANUAL@.pdf
+	zip -9 $@ $<
+
+html/index.html: manual.xml $(HTML_DEPS)
+	@test -d html || mkdir html
+	$(JADE) $(CATALOG) -d $(HTML_STYLESHEET) -V use-output-dir -t sgml $(srcdir)/phpdocxml.dcl manual.xml
+
+php/index.php: manual.xml $(PHPWEB_DEPS)
+	@test -d php || mkdir php
+	-$(JADE) $(CATALOG) -d $(PHPWEB_STYLESHEET) -V use-output-dir -t sgml $(srcdir)/phpdocxml.dcl manual.xml
+
+@MANUAL@.txt: @MANUAL@.html
+	lynx -term=vt100 -nolist -dump file:`pwd`/$< > $@
+
+@MANUAL@.doc.pdb: @MANUAL@.txt makedoc
+	./makedoc -b @MANUAL@.txt @MANUAL@.doc.pdb $(PALMDOCTITLE)
+
+# Note: Isilo converter available only in binary from www.isilo.com
+@MANUAL@.isilo.pdb: @MANUAL@.html
+	iSilo386 @MANUAL@.html @MANUAL@.isilo.pdb
+
+@MANUAL@.zip: html/index.html
+	-rm -f $@ && (cd html; zip -9 -q ../$@ *.html)
+
+@MANUAL@.tar.gz: html/index.html
+	-rm -f $@ && (cd html; tar -cf - *.html) | gzip -9 > $@
+
+@MANUAL@.tar.bz2: html/index.html
+	-rm -f $@ && (cd html; tar -cf - *.html) | bzip2 -9 > $@
+
+howto/html/index.html: howto/howto.xml $(HOWTO_DEPS)
+	@test -d howto/html || mkdir howto/html
+	-$(JADE) -i lang-en $(CATALOG) -d $(HOWTO_STYLESHEET) -V use-output-dir -t sgml $(srcdir)/phpdocxml.dcl $(srcdir)/howto/howto.xml
+
+howto/howto.html.tar.gz: howto/html/index.html $(HOWTO_DEPS)
+	tar -cvzf $@ howto/html/*.html  
+  
+install.html: install.xml $(HTML_DEPS)
+	$(JADE) $(CATALOG) -V nochunks -d install.dsl -t sgml $(srcdir)/phpdocxml.dcl install.xml > $@
+
+install.txt: install.html
+	lynx -nolist -dump file:`pwd`/$< > $@
+
+# File endings we are going to define general rules for:
+.SUFFIXES: .html .xml .sgml .tex .dvi .ps .rtf .pdf
+
+# General rules:
+.xml.rtf:
+	$(JADE) $(CATALOG) -d $(PRINT_STYLESHEET) -t rtf $(srcdir)/phpdocxml.dcl $<
+
+# runs three times -
+# 1. generates the dvi with a completely bogus table of contents
+# 2. generates the dvi with a table of contents that is off based on the size
+#    of the table of contents
+# 3. generates a dvi with all the right page numbers and such
+.tex.dvi:
+	# a hack around bugs in jade/jadetex...
+	mv $< $<.tmp
+	sed -e '/HeadingText/,/endHeadPar/ s/_/\\137/g' $<.tmp > $<
+	rm $<.tmp
+	-jadetex $<
+	-jadetex $<
+	-jadetex $<
+
+# test all possible errors
+test: manual.xml
+	$(NSGMLS) -i lang-$(LANG) -s $(srcdir)/phpdocxml.dcl $<
+
+# ignore missing IDs and check if the manual can be generated anyway
+test_man_gen: manual.xml
+	$(NSGMLS) -wno-idref -i lang-$(LANG) -s $(srcdir)/phpdocxml.dcl $<
+
+clean:
+	rm -rf html php howto/html
+	rm -f @MANUAL@.txt [a-z]*.html @MANUAL@.rtf manual.info
+	rm -f @MANUAL@.zip @MANUAL@.tar.gz .manual.xml
+	rm -f manual_*.pdb makedoc *.manifest
+	rm -f *.aux *.tex *.log *.dvi *.toc *.ps *.gz
+	rm -f status.txt missing.txt checkdoc
+
+distclean: clean
+	rm -f Makefile html.dsl print.dsl checkdoc \
+	      howto.dsl manual.xml quickref.dsl common.dsl \
+	      html-locale.dsl phpweb.dsl version.ent
