@@ -1,0 +1,276 @@
+# +----------------------------------------------------------------------+
+# | PHP HTML Embedded Scripting Language Version 3.0                     |
+# +----------------------------------------------------------------------+
+# | Copyright (c) 1997,1998 PHP Development Team (See Credits file)      |
+# +----------------------------------------------------------------------+
+# | This program is free software; you can redistribute it and/or modify |
+# | it under the terms of one of the following licenses:                 |
+# |                                                                      |
+# |  A) the GNU General Public License as published by the Free Software |
+# |     Foundation; either version 2 of the License, or (at your option) |
+# |     any later version.                                               |
+# |                                                                      |
+# |  B) the PHP License as published by the PHP Development Team and     |
+# |     included in the distribution in the file: LICENSE                |
+# |                                                                      |
+# | This program is distributed in the hope that it will be useful,      |
+# | but WITHOUT ANY WARRANTY; without even the implied warranty of       |
+# | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        |
+# | GNU General Public License for more details.                         |
+# |                                                                      |
+# | You should have received a copy of both licenses referred to here.   |
+# | If you did not, or have any questions about PHP licensing, please    |
+# | contact core@php.net.                                                |
+# +----------------------------------------------------------------------+
+# | Authors: Stig Bakken <ssb@fast.no>                                   |
+# +----------------------------------------------------------------------+
+
+#
+# $Id$
+#
+
+VPATH=@srcdir@
+srcdir=@srcdir@
+PHP_SOURCE=@PHP_SOURCE@
+LANG=@LANG@
+
+# For Suse 6.2, uncomment the CATALOG definition below.
+# Also modify /usr/share/sgml/docbk30/docbook.dcl:
+#   change 'OMITTAG NO' to 'OMITTAG YES'
+#   change 'NAMELEN 44' to e.g. 'NAMELEN 54'
+# CATALOG="-c /usr/share/sgml/CATALOG.docbk30"
+
+VERSION="@PHP_VERSION@"
+HTML_STYLESHEET=$(srcdir)/html.dsl
+PHPWEB_STYLESHEET=$(srcdir)/phpweb.dsl
+PHP_STYLESHEET=$(srcdir)/php.dsl
+HOWTO_STYLESHEET=$(srcdir)/howto.dsl
+PRINT_STYLESHEET=@DOCBOOK_PRINT@
+
+all: html
+
+PREFACE=$(LANG)/preface.xml \
+	$(LANG)/bookinfo.xml
+
+APPENDICES=$(LANG)/appendices/migration.xml \
+           $(LANG)/appendices/escaping.xml \
+           $(LANG)/appendices/regexp.xml \
+           $(LANG)/appendices/http-stuff.xml \
+           $(LANG)/appendices/history.xml \
+           $(LANG)/appendices/debugger.xml \
+           $(LANG)/appendices/phpdevel.xml
+
+CHAPTERS=$(LANG)/chapters/copyright.xml \
+         $(LANG)/chapters/intro.xml \
+         $(LANG)/chapters/config.xml \
+         $(LANG)/chapters/install.xml \
+         $(LANG)/chapters/security.xml \
+         $(LANG)/features/connection-handling.xml \
+         $(LANG)/features/file-upload.xml \
+         $(LANG)/features/cookies.xml \
+         $(LANG)/features/http-auth.xml \
+         $(LANG)/features/error-handling.xml \
+         $(LANG)/features/images.xml \
+         $(LANG)/features/remote-files.xml \
+         $(LANG)/language/basic-syntax.xml \
+         $(LANG)/language/operators.xml \
+         $(LANG)/language/constants.xml \
+         $(LANG)/language/types.xml \
+         $(LANG)/language/control-structures.xml \
+         $(LANG)/language/functions.xml \
+         $(LANG)/language/oop.xml \
+         $(LANG)/language/variables.xml \
+         $(LANG)/language/expressions.xml
+
+FUNCREF= \
+	$(LANG)/functions/array.xml \
+	$(LANG)/functions/adabas.xml \
+	$(LANG)/functions/bc.xml \
+	$(LANG)/functions/datetime.xml \
+	$(LANG)/functions/dbase.xml \
+	$(LANG)/functions/dbm.xml \
+	$(LANG)/functions/dl.xml \
+	$(LANG)/functions/dir.xml \
+	$(LANG)/functions/exec.xml \
+	$(LANG)/functions/filepro.xml \
+	$(LANG)/functions/filesystem.xml \
+	$(LANG)/functions/ftp.xml \
+	$(LANG)/functions/http.xml \
+	$(LANG)/functions/hw.xml \
+	$(LANG)/functions/ibase.xml \
+	$(LANG)/functions/ifx.xml \
+	$(LANG)/functions/image.xml \
+	$(LANG)/functions/imap.xml \
+	$(LANG)/functions/ldap.xml \
+	$(LANG)/functions/mail.xml \
+	$(LANG)/functions/math.xml \
+	$(LANG)/functions/mcal.xml \
+	$(LANG)/functions/misc.xml \
+	$(LANG)/functions/mcrypt.xml \
+	$(LANG)/functions/msql.xml \
+	$(LANG)/functions/mysql.xml \
+	$(LANG)/functions/nis.xml \
+	$(LANG)/functions/sybase.xml \
+	$(LANG)/functions/network.xml \
+	$(LANG)/functions/oci8.xml \
+	$(LANG)/functions/oracle.xml \
+	$(LANG)/functions/pcre.xml \
+	$(LANG)/functions/pgsql.xml \
+	$(LANG)/functions/posix.xml \
+	$(LANG)/functions/info.xml \
+	$(LANG)/functions/regex.xml \
+	$(LANG)/functions/sem.xml \
+	$(LANG)/functions/session.xml \
+	$(LANG)/functions/solid.xml \
+	$(LANG)/functions/snmp.xml \
+	$(LANG)/functions/strings.xml \
+	$(LANG)/functions/uodbc.xml \
+	$(LANG)/functions/url.xml \
+	$(LANG)/functions/var.xml \
+	$(LANG)/functions/wddx.xml \
+	$(LANG)/functions/zlib.xml
+
+FILES=$(PREFACE) $(APPENDICES) $(CHAPTERS) $(FUNCREF) global.ent chapters.ent
+DIST_FILES=manual.zip manual.tar.gz manual.rtf.gz bigmanual.html.gz \
+	manual.prc manual.txt.gz
+MIRROR_TARGETS=php/manual.php $(DIST_FILES) html/manual.html
+
+html.dsl: html.dsl.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+print.dsl: print.dsl.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+phpweb.dsl: phpweb.dsl.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+manual.xml: manual.xml.in .manual.xml
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+.manual.xml: $(FILES)
+	touch .manual.xml
+
+html: html/manual.html
+phpweb: php/manual.php
+php: php/index.php
+rtf: manual.rtf
+dvi: manual.dvi
+ps: manual.ps
+pdf: manual.pdf
+howto: howto.html
+
+FORCE:
+
+funclist.txt: FORCE
+	$(srcdir)/genfunclist $(PHP_SOURCE) > funclist.txt
+
+funcsummary.txt: FORCE
+	$(srcdir)/genfuncsummary $(PHP_SOURCE) > funcsummary.txt
+
+Makefile: $(srcdir)/Makefile.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+checkdoc: $(srcdir)/checkdoc.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+mirror-files: $(MIRROR_TARGETS)
+
+sync: mirror-files
+	-(cd php; rsync -e ssh1 --rsync-path=/usr/local/bin/rsync -azvc . www.php.net:/local/Web/sites/phpweb/manual/.)
+	-(cd html; rsync -e ssh1 --rsync-path=/usr/local/bin/rsync -azvc . www.php.net:/local/Web/sites/phpweb/manual/html/.)
+	-rsync -e ssh1 --rsync-path=/usr/local/bin/rsync -azvc $(DIST_FILES) www.php.net:/local/Web/sites/phpweb/distributions/.
+
+snapshot: manual-snapshot.tar.gz
+
+manual-snapshot.tar.gz: bigmanual.html html/manual.html manual.rtf manual.txt
+	tar -cvzf $@ bigmanual.html html/*.html manual.rtf manual.txt
+
+status: checkdoc ./funclist.txt
+	$(srcdir)/checkdoc -s > $(srcdir)/status.txt
+	$(srcdir)/checkdoc -m > $(srcdir)/missing.txt
+
+summary: ./funcsummary.txt
+
+makedoc: makedoc.cc
+	g++ -o makedoc makedoc.cc
+
+bigmanual.html: $(srcdir)/manual.xml $(HTML_STYLESHEET)
+	jade $(CATALOG) -i lang-$(LANG) -V nochunks -d $(HTML_STYLESHEET) -t sgml $(srcdir)/phpdocxml.dcl $(srcdir)/manual.xml > $@
+
+bigmanual.html.gz: bigmanual.html
+	gzip -c $< > $@
+
+manual.rtf.gz: manual.rtf
+	gzip -c $< > $@
+
+manual.txt.gz: manual.txt
+	gzip -c $< > $@
+
+html/manual.html: $(srcdir)/manual.xml $(HTML_STYLESHEET)
+	@test -d html || mkdir html
+	jade $(CATALOG) -i lang-$(LANG) -d $(HTML_STYLESHEET) -V use-output-dir -t sgml $(srcdir)/phpdocxml.dcl $(srcdir)/manual.xml
+
+php/index.php: $(srcdir)/manual.xml $(PHPWEB_STYLESHEET)
+	@test -d php || mkdir php
+	-jade $(CATALOG) -i lang-$(LANG) -d $(PHP_STYLESHEET) -V use-output-dir -t sgml $(srcdir)/phpdocxml.dcl $(srcdir)/manual.xml
+
+php/manual.php: $(srcdir)/manual.xml $(PHPWEB_STYLESHEET)
+	@test -d php || mkdir php
+	-jade $(CATALOG) -i lang-$(LANG) -d $(PHPWEB_STYLESHEET) -V use-output-dir -t sgml $(srcdir)/phpdocxml.dcl $(srcdir)/manual.xml
+
+manual.txt: bigmanual.html
+	lynx -nolist -dump file:`pwd`/bigmanual.html > manual.txt
+
+manual.prc: manual.txt makedoc
+	./makedoc -b manual.txt manual.prc 'PHP3 Manual'
+
+manual.zip: $(srcdir)/html/manual.html
+	-rm -f $@ && (cd html; zip -9 -q ../$@ *.html)
+
+manual.tar.gz: $(srcdir)/html/manual.html
+	-rm -f $@ && (cd html; tar -cf - *.html) | gzip > manual.tar.gz
+
+howto.html: $(srcdir)/howto.xml $(HOWTO_STYLESHEET) global.ent
+	jade $(CATALOG) -i lang-$(LANG) -d $(HOWTO_STYLESHEET) -t sgml $(srcdir)/phpdocxml.dcl $(srcdir)/howto.xml
+
+tex latex: $(srcdir)/manual.tex
+
+# File endings we are going to define general rules for:
+.SUFFIXES: .html .xml .sgml .tex .dvi .ps .rtf
+
+# General rules:
+.xml.tex:
+	jade $(CATALOG) -i lang-$(LANG) -d $(PRINT_STYLESHEET) -t tex $(srcdir)/phpdocxml.dcl $<
+
+.xml.rtf:
+	jade $(CATALOG) -i lang-$(LANG) -d $(PRINT_STYLESHEET) -t rtf $(srcdir)/phpdocxml.dcl $<
+
+# runs three times -
+# 1. generates the dvi with a completely bogus table of contents
+# 2. generates the dvi with a table of contents that is off based on the size
+#    of the table of contents
+# 3. generates a dvi with all the right page numbers and such
+.tex.dvi:
+	jadetex $<
+	jadetex $<
+	jadetex $<
+
+.dvi.ps:
+	dvips -o $@ $<
+
+.ps.pdf:
+	ps2pdf -p $@ $<
+
+test: manual.xml
+	nsgmls -i lang-$(LANG) -s $(srcdir)/phpdocxml.dcl $<
+
+clean:
+	( \
+	cd $(srcdir); \
+	rm -rf html php; \
+	rm -f manual.txt [a-z]*.html manual.rtf manual.info \
+	rm -f manual.zip manual.tar.gz sync-no commit-no .manual.xml \
+	rm -f manual.prc makedoc *.manifest \
+	rm -f *.aux *.tex *.log *.dvi *.toc *.ps *.gz \
+	rm -f funclist.txt funcsummary.txt status.txt missing.txt checkdoc \
+	)
