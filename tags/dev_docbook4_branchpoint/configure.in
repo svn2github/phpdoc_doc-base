@@ -1,0 +1,456 @@
+dnl $Id$
+
+AC_INIT(global.ent)
+
+dnl used by checkdoc
+AC_PATH_PROG(PERL_PATH, perl)
+
+dnl AC_MSG_CHECKING(for DocBook doctype)
+dnl check_catalog_files() {
+dnl    for catalog in $@; do
+dnl 	  DBDT=`grep -E '^PUBLIC.*"docbook.dtd".*$' $catalog 2>/dev/null | cut -d'"' -f 2 `
+dnl 	  if test -n "$DBDT" ; then
+dnl 	      DOCBOOK_DOCTYPE=$DBDT
+dnl 	      return 1
+dnl 	  fi  
+dnl 	  MORECATS=`grep -i '^catalog' $catalog 2>/dev/null | cut -d'"' -f 2`
+dnl 	  if test -n "$MORECATS" ; then
+dnl 	     if check_catalog_files $MORECATS ; then
+dnl 	       return 1
+dnl 	     else 
+dnl 	       return 0
+dnl 	     fi
+dnl 	  fi
+dnl 	  return 0
+dnl    done
+dnl    return 0
+dnl }
+dnl if test -n "$SGML_CATALOG_FILES" ; then
+dnl    CATFILES=`echo $SGML_CATALOG_FILES | sed -e 's/:/ /'g`
+dnl    check_catalog_files $CATFILES
+dnl fi
+dnl if test -n "$DOCBOOK_DOCTYPE"; then
+dnl    AC_MSG_RESULT(got $DOCBOOK_DOCTYPE)
+dnl else 
+dnl    DOCBOOK_DOCTYPE="-//Davenport//DTD DocBook V3.0//EN"
+dnl    AC_MSG_RESULT(defaulting to $DOCBOOK_DOCTYPE)
+dnl fi 
+DOCBOOK_DOCTYPE="-//Norman Walsh//DTD DocBk XML V1.4//EN"
+AC_SUBST(DOCBOOK_DOCTYPE)
+
+AC_MSG_CHECKING(for docbook.dsl)
+AC_ARG_WITH(dsssl,
+[  --with-dsssl=[DIR]      Look for DSSSL stylesheets in the specified directory],
+[
+    if test -d "$withval" ; then
+	DOCBOOK_HTML=$withval/html/docbook.dsl
+        DOCBOOK_PRINT=$withval/print/docbook.dsl
+        AC_MSG_RESULT(in $withval)
+    fi
+],[
+    for dir in \
+           /usr/lib/sgml/stylesheet/dsssl/docbook/nwalsh \
+	   /usr/local/share/sgml/docbook/dsssl/modular \
+	   /usr/lib/dsssl/stylesheets/docbook \
+	   /usr/lib/dsssl/stylesheets/nwalsh-modular \
+	   /usr/lib/dsssl/stylesheets/docbook \
+	   /usr/lib/sgml/stylesheets/nwalsh-modular \
+	   /usr/lib/sgml/docbook\
+	   /usr/lib/sgml/stylesheets/docbook \
+	   /opt/sgml/lib/stylesheets/docbook \
+	   /usr/share/sgml/docbk30/dsl \
+	   /usr/share/sgml/docbkdsl \
+	   /usr/share/sgml/stylesheets/docbook \
+           /usr/share/sgml/docbook/stylesheet/dsssl/modular \
+           /usr/share/sgml/docbook/dsssl-stylesheets \
+	   /usr/local/lib/dsssl/stylesheets/docbook \
+	   /usr/local/lib/dsssl/stylesheets/nwalsh-modular \
+	   /usr/local/lib/sgml/stylesheets/docbook \
+	   /usr/local/lib/sgml/stylesheets/nwalsh-modular \
+	   /usr/local/lib/sgml/docbook \
+	   /usr/local/share/sgml/docbook/dsssl/modular \
+	   ../phpdoc-tools/dsssl/docbook \
+	   ../phpdoc-tools/dsssl \
+	   phpdoc-tools/dsssl/docbook \
+	   phpdoc-tools/dsssl
+    do
+	if test -f "$dir/html/docbook.dsl"; then
+            DOCBOOK_HTML="$dir/html/docbook.dsl"
+            DOCBOOK_PRINT="$dir/print/docbook.dsl"
+            AC_MSG_RESULT(autodetected: $dir)
+            break
+	fi
+    done
+])
+if test -z "$DOCBOOK_HTML"; then
+    AC_MSG_ERROR(WARNING!!! DSSSL NOT FOUND - WON'T WORK THIS WAY)
+fi
+AC_SUBST(DOCBOOK_HTML)
+AC_SUBST(DOCBOOK_PRINT)
+
+AC_MSG_CHECKING(for docbook.xsl)
+AC_ARG_WITH(xsl,
+[  --with-xsl=[URI]        Look for XSL stylesheets at the specified URI],
+[
+    DOCBOOKXSL_BIGHTML=$withval/html/docbook.xsl
+    DOCBOOKXSL_HTML=$withval/html/chunk.xsl
+    DOCBOOKXSL_HTMLHELP=$withval/htmlhelp/htmlhelp.xsl
+    DOCBOOKXSL_PRINT=$withval/fo/docbook.xsl
+    AC_MSG_RESULT(in $withval)
+],[
+    for dir in \
+        ../phpdoc-tools/xsl/docbook \
+        ../phpdoc-tools/xsl \
+        phpdoc-tools/xsl/docbook \
+        phpdoc-tools/xsl
+    do
+        if test -d "$dir"; then
+            DOCBOOKXSL_BIGHTML=$dir/html/docbook.xsl
+            DOCBOOKXSL_HTML=$dir/html/chunk.xsl
+            DOCBOOKXSL_HTMLHELP=$dir/htmlhelp/htmlhelp.xsl
+            DOCBOOKXSL_PRINT=$dir/fo/docbook.xsl
+            AC_MSG_RESULT(autodetected: $dir)
+            
+            break
+        fi
+    done
+])
+if test -z "$DOCBOOKXSL_BIGHTML"; then
+    DOCBOOKXSL_BIGHTML=../phpdoc-tools/xsl/html/docbook.xsl
+    DOCBOOKXSL_HTML=../phpdoc-tools/xsl/html/chunk.xsl
+    DOCBOOKXSL_HTMLHELP=../phpdoc-tools/xsl/htmlhelp/htmlhelp.xsl
+    DOCBOOKXSL_PRINT=../phpdoc-tools/xsl/fo/docbook.xsl
+    AC_MSG_RESULT(not found, defaulting)
+fi
+AC_SUBST(DOCBOOKXSL_BIGHTML)
+AC_SUBST(DOCBOOKXSL_HTML)
+AC_SUBST(DOCBOOKXSL_HTMLHELP)
+AC_SUBST(DOCBOOKXSL_PRINT)
+
+AC_MSG_CHECKING(for PHP source path)
+AC_ARG_WITH(source,
+[  --with-source=[DIR]     Look at the specified source directory],
+[
+    if test -d "$withval" ; then
+	PHP_SOURCE=$withval
+    else
+	PHP_SOURCE=../php4
+    fi
+],[
+  PHP_SOURCE=../php4
+])
+AC_MSG_RESULT($PHP_SOURCE)
+AC_SUBST(PHP_SOURCE)
+PHP_BUILD_DATE=`date`
+AC_SUBST(PHP_BUILD_DATE)
+
+AC_MSG_CHECKING(for language)
+AC_ARG_WITH(lang,
+[  --with-lang=LANG        Choose a language to work with],
+[
+    if test "$withval" = "yes"; then
+        PHP_BUILD_DATE=`date '+%Y-%m-%d'`
+        AC_SUBST(PHP_BUILD_DATE)
+
+	LANG=en
+	AC_MSG_RESULT([en (default)])
+    else
+        if test ! -d "$srcdir/$withval"; then
+	    AC_MSG_RESULT()
+	    AC_MSG_ERROR(Language \"$withval\" not supported!)
+	fi
+       
+        dnl day/month/year
+        PHP_BUILD_DATE=`date '+%d-%m-%Y'`
+        AC_SUBST(PHP_BUILD_DATE)
+
+	case $withval in
+	  kr)
+	    LANG="ko"
+ 	    LANGDIR="kr"
+	  ;;
+	  hk)
+	    LANG="zh_hk"
+	    LANGDIR="hk"
+	  ;;
+	  tw)
+	    LANG="zh_tw"
+	    LANGDIR="tw"
+	  ;;
+	  *)
+	    LANG=$withval
+	    LANGDIR=$withval
+	esac
+        AC_MSG_RESULT( $withval )
+    fi
+],[
+    LANG=en
+    LANGDIR=en
+    AC_MSG_RESULT([en (default)])
+])
+AC_SUBST(LANG)
+AC_SUBST(LANGDIR)
+
+MANUAL="php_manual_$LANG"
+AC_SUBST(MANUAL)
+
+dnl localize paper size by language
+dnl (instead of using system-dependant default)
+case "$LANG" in
+  cs|de|hu|it|ja|ko|pl|tr|zh_hk)
+    PAPER_TYPE="A4"
+    PDF_PAPER_TYPE="a4"
+    ;;
+  *)
+    PAPER_TYPE="USletter"
+    PDF_PAPER_TYPE="letter"
+    ;;
+esac
+AC_SUBST(PAPER_TYPE)
+AC_SUBST(PDF_PAPER_TYPE)
+
+dnl localize order of number and element name
+dnl in some headers autogenerated by jade
+case "$LANG" in
+  hu|ko) NUMBER_FIRST="#t" ;;
+  *) NUMBER_FIRST="#f" ;;
+esac
+AC_SUBST(NUMBER_FIRST)
+
+dnl optionaly reduce margins to save some trees life
+AC_MSG_CHECKING(for treesaving)
+AC_ARG_WITH(treesaving,
+[  --with-treesaving       Save trees by setting pagesize and margins],
+[
+  TREESAVING="#t";
+  LEFT_MARGIN="(define %left-margin% 4pi)";   
+  RIGHT_MARGIN="(define %right-margin% 3pi)";
+  TOP_MARGIN="(define %top-margin% 3pi)";
+  HEADER_MARGIN="(define %header-margin% 2pi)";
+  FOOTER_MARGIN="(define %footer-margin% 2pi)";
+  BOTTOM_MARGIN="(define %bottom-margin% 3pi)";
+  LINE_SPACING="(define %line-spacing-factor% 1.2)";
+  HEAD_BEFORE="(define %head-before-factor% 0.6)";
+  HEAD_AFTER="(define %head-after-factor% 0.3)";
+  BODY_START="(define %body-start-indent% 3pi)";
+  BLOCK_SEP="(define %block-sep% (* %para-sep% 1.2))";
+],[ 
+  TREESAVING="#f";
+  LEFT_MARGIN="";   
+  RIGHT_MARGIN="";
+  TOP_MARGIN="";
+  HEADER_MARGIN="";
+  FOOTER_MARGIN=""; 
+  BOTTOM_MARGIN=""; 
+  LINE_SPACING="";
+  HEAD_BEFORE="";
+  HEAD_AFTER="";
+  BODY_START="";
+  BLOCK_SEP="";
+])
+AC_SUBST(LEFT_MARGIN)
+AC_SUBST(RIGHT_MARGIN)
+AC_SUBST(TOP_MARGIN)
+AC_SUBST(HEADER_MARGIN)
+AC_SUBST(FOOTER_MARGIN)
+AC_SUBST(BOTTOM_MARGIN)
+AC_SUBST(LINE_SPACING)
+AC_SUBST(HEAD_BEFORE)
+AC_SUBST(HEAD_AFTER)
+AC_SUBST(BODY_START)
+AC_SUBST(BLOCK_SEP)
+AC_SUBST(TREESAVING)
+echo "saving trees: $TREESAVING";
+
+case "$LANG" in
+  ja|tw|ko) ENCODING="UTF-8";;
+  zh_hk) ENCODING="big5";;
+  cs|hu|pl) ENCODING="ISO-8859-2";;
+  tr) ENCODING="ISO-8859-9";;
+  *) ENCODING="ISO-8859-1";;
+esac
+AC_SUBST(ENCODING)
+
+dnl localize the PalmPilot DOC title
+case "$LANG" in
+  de) PALMDOCTITLE="'PHP Handbuch'";;
+  es) PALMDOCTITLE="'Manual de PHP'";;
+  fr) PALMDOCTITLE="'Manuel PHP'";;
+  hu) PALMDOCTITLE="'PHP Kézikönyv'";;
+  it) PALMDOCTITLE="'Manuale PHP'";;
+  nl) PALMDOCTITLE="'PHP Handleiding'";;
+  pl) PALMDOCTITLE="'Podrêcznik PHP'";;
+  pt_BR) PALMDOCTITLE="'Manual do PHP'";;
+# tr) PALMDOCTITLE="";;
+  zh_hk) PALMDOCTITLE="PHP ¤â¥U";;
+  *) PALMDOCTITLE="'PHP Manual'";;
+esac
+AC_SUBST(PALMDOCTITLE)
+
+dnl look for the OpenJade DSSSL parser
+AC_PATH_PROG(OPENJADECHK, "openjade", no)
+if test $OPENJADECHK = "no"; then
+    dnl OpenJade isnt present, so look for the older Jade instead
+    AC_PATH_PROG(JADECHK, "jade", no)
+    if test $JADECHK = "no"; then
+        AC_MSG_CHECKING(for jade in phpdoc-tools)
+        if test -e ../phpdoc-tools/jade/jade.exe ; then
+            JADEPATH=../phpdoc-tools/jade/jade.exe
+            AC_MSG_RESULT("yes")
+        else
+            AC_MSG_RESULT("no")
+            AC_MSG_ERROR(unable to locate either Jade or OpenJade)
+        fi
+    else
+        JADEPATH=$JADECHK
+    fi
+else
+    JADEPATH=$OPENJADECHK
+fi
+
+dnl Search for nsgmls (for win32 plug&pray)
+if test -e ../phpdoc-tools/jade/nsgmls.exe ; then
+    NSGMLSCMD=../phpdoc-tools/jade/nsgmls.exe
+else
+    NSGMLSCMD=nsgmls
+fi
+
+HTMLHELP_ENCODING=$ENCODING
+
+case "$ENCODING" in
+  UTF-8)
+    JADE="SP_ENCODING=XML SP_CHARSET_FIXED=YES $JADEPATH"
+    NSGMLS="SP_ENCODING=XML SP_CHARSET_FIXED=YES $NSGMLSCMD"
+    ;;
+  big5)
+    JADE="SP_ENCODING=big5 SP_CHARSET_FIXED=YES $JADEPATH"
+    NSGMLS="SP_ENCODING=big5 SP_CHARSET_FIXED=YES $NSGMLSCMD"
+    ;;
+  ISO-8859-2)
+    JADE="SP_ENCODING=ISO-8859-2 $JADEPATH"
+    NSGMLS="SP_ENCODING=ISO-8859-2 $NSGMLSCMD"
+    HTMLHELP_ENCODING="windows-1250"
+    ;;
+  ISO-8859-9)
+    JADE="SP_ENCODING=ISO-8859-9 $JADEPATH"
+    NSGMLS="SP_ENCODING=ISO-8859-9 $NSGMLSCMD"
+    HTMLHELP_ENCODING="windows-1254"
+    ;;
+  *)
+    JADE=$JADEPATH
+    NSGMLS=$NSGMLSCMD
+    ;;
+esac
+
+AC_SUBST(JADE)
+AC_SUBST(NSGMLS)
+AC_SUBST(HTMLHELP_ENCODING)
+
+
+dnl Do something smart to find catalog-files
+CATALOG=""
+
+dnl SuSE 6.2/6.3 need this
+if test -e /usr/share/sgml/CATALOG.docbk30
+then
+  CATALOG="$CATALOG -c /usr/share/sgml/CATALOG.docbk30"
+fi
+
+dnl For windows (and maybe *nix too?) users lacking catalog-files
+
+dnl jade catalog file
+# how about using JADEPATH? You should replace the last 4 chars ('jade') with catalog
+if test -e ../phpdoc-tools/jade/catalog
+then
+  CATALOG="$CATALOG -c ../phpdoc-tools/jade/catalog"
+fi
+
+dnl iso-ents catalog file
+if test -e ../phpdoc-tools/iso-entities/catalog
+then
+  CATALOG="$CATALOG -c ../phpdoc-tools/iso-entities/catalog"
+fi
+
+dnl dsssl catalog file
+if test -e ../phpdoc-tools/dsssl/docbook/catalog
+then
+  CATALOG="$CATALOG -c ../phpdoc-tools/dsssl/docbook/catalog"
+fi
+
+AC_SUBST(CATALOG)
+
+
+
+AC_OUTPUT(\
+Makefile \
+version.ent \
+checkdoc \
+common.dsl \
+howto.dsl \
+html.dsl \
+html-locale.dsl \
+install.dsl \
+print.dsl \
+phpweb.dsl \
+quickref.dsl \
+manual.xml \
+html.xsl \
+bightml.xsl \
+print.xsl \
+htmlhelp.xsl)
+
+chmod +x checkdoc
+
+dnl sanity checks for SuSE 6.x
+if test -e /usr/share/sgml/docbk30/docbook.dcl 
+then
+  if grep -n "NAMELEN.\+44" /usr/share/sgml/docbk30/docbook.dcl /dev/null
+  then
+    AC_MSG_WARN(please change this to e.g. 'NAMELEN 54' in /usr/share/sgml/docbk30/docbook.dcl )
+  fi
+  if grep -n "OMITTAG.\+NO" /usr/share/sgml/docbk30/docbook.dcl /dev/null
+  then
+    AC_MSG_WARN(please change this to 'OMITTAG YES' in /usr/share/sgml/docbk30/docbook.dcl )
+  fi
+
+dnl look for tex bug in print stylesheet
+  if test -e /usr/share/sgml/docbkdsl/print/dbprint.dsl
+  then 
+    if test 2 -eq  `grep -c tex  /usr/share/sgml/docbkdsl/print/dbprint.dsl`
+    then
+      if fgrep -q 'country: (dsssl-country-code)' /usr/share/sgml/docbkdsl/print/dbprint.dsl
+      then 	
+        if ! grep -q ';;.*country:' /usr/share/sgml/docbkdsl/print/dbprint.dsl
+	then
+	  AC_MSG_WARN(to prevent a tex bug you should comment out )
+	  AC_MSG_WARN('country: (dsssl-country-code)' )
+	  AC_MSG_WARN(in /usr/share/sgml/docbkdsl/print/dbprint.dsl )
+	  AC_MSG_WARN(or update your DSSSL-Stylesheets)
+	  AC_MSG_WARN(to at least version 1.54)
+	fi
+      fi
+    fi
+  fi
+fi
+
+
+dnl check for files and translations, create chapter entities
+echo creating chapters.ent
+DEPEND_FILES=""
+rm -f chapters.ent
+echo "<!-- DON'T TOUCH - AUTOGENERATED BY ./configure -->" > chapters.ent
+for file in `find $srcdir/en -name "*.xml" | sed -e"s%^$srcdir\/en\/%%g" | sort`
+do 
+	name=`echo $file | sed -e"s/\//./g" -e"s/.xml$//g" -e "s/_/-/g"`
+	if test -f $srcdir/$LANGDIR/$file  
+	then
+		file=$srcdir/$LANGDIR/$file	
+	else
+		file=$srcdir/en/$file
+		echo " untranslated $file (`wc -l <$file | tr -d ' '` lines)"
+	fi
+	DEPEND_FILES="$DEPEND_FILES $file"
+  	echo "<!ENTITY $name     SYSTEM \"$file\">" >> chapters.ent
+done  
+chmod a-w chapters.ent
+	  
