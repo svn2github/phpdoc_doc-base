@@ -1,0 +1,215 @@
+#
+# +----------------------------------------------------------------------+
+# | PHP Version 4.0                                                      |
+# +----------------------------------------------------------------------+
+# | Copyright (c) 1997-2001 The PHP Group                                |
+# +----------------------------------------------------------------------+
+# | This source file is subject to version 2.02 of the PHP licience,     |
+# | that is bundled with this package in the file LICENCE and is         |
+# | avalible through the world wide web at                               |
+# | http://www.php.net/license/2_02.txt.                                 |
+# | If uou did not receive a copy of the PHP license and are unable to   |
+# | obtain it through the world wide web, please send a note to          |
+# | license@php.net so we can mail you a copy immediately                |
+# +----------------------------------------------------------------------+
+# | Authors: Stig Bakken <ssb@fast.no>                                   |
+# +----------------------------------------------------------------------+
+#
+
+#
+# $Id$
+#
+
+VPATH=@srcdir@
+srcdir=@srcdir@
+PHP_SOURCE=@PHP_SOURCE@
+LANG=@LANG@
+JADE=@JADE@
+NSGMLS=@NSGMLS@
+
+CATALOG=@CATALOG@
+
+VERSION="@PHP_VERSION@"
+HTML_STYLESHEET=html.dsl
+PHPWEB_STYLESHEET=phpweb.dsl
+HOWTO_STYLESHEET=howto.dsl
+PRINT_STYLESHEET=print.dsl
+QUICKREF_STYLESHEET=quickref.dsl
+KDEVELOP_TOC_STYLESHEET=kdevelop_toc.dsl
+
+HTML_DEPS=$(HTML_STYLESHEET) html-common.dsl common.dsl
+PRINT_DEPS=$(PRINT_STYLESHEET) common.dsl
+PHPWEB_DEPS=$(PHPWEB_STYLESHEET) html-common.dsl common.dsl
+QUICKREF_DEPS=quickref.dsl Makefile
+KDEVELOP_TOC_DEPS=kdevelop_toc.dsl Makefile
+
+PALMDOCTITLE=@PALMDOCTITLE@
+
+all: html
+
+DIST_FILES=manual.zip manual.tar.gz bigmanual.html.gz \
+	manual_doc.pdb manual.txt.gz manual.tar.bz2
+MIRROR_TARGETS=php/index.php html/index.html $(DIST_FILES)
+
+html.dsl: $(srcdir)/html.dsl.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+print.dsl: $(srcdir)/print.dsl.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+phpweb.dsl: $(srcdir)/phpweb.dsl.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+common.dsl: $(srcdir)/common.dsl.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+manual.xml: $(srcdir)/manual.xml.in .manual.xml
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+.manual.xml: $(DEPEND_FILES) global.ent
+	touch .manual.xml
+
+html: html/index.html
+bightml: bigmanual.html
+phpweb: php/index.php
+rtf: manual.rtf
+dvi: manual.dvi
+ps: manual.ps
+pdf: manual.pdf
+howto: howto.html
+
+FORCE:
+
+funclist.txt: FORCE
+	$(srcdir)/genfunclist $(PHP_SOURCE) > funclist.txt
+
+funcsummary.txt: FORCE
+	$(srcdir)/genfuncsummary $(PHP_SOURCE) > funcsummary.txt
+
+Makefile: $(srcdir)/Makefile.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+checkdoc: $(srcdir)/checkdoc.in ./config.status
+	CONFIG_FILES=$@ CONFIG_HEADERS= ./config.status
+
+mirror-files: $(MIRROR_TARGETS)
+
+snapshot: manual-snapshot.tar.gz
+
+manual-snapshot.tar.gz: bigmanual.html html/index.html manual.rtf manual.txt
+	tar -cvzf $@ bigmanual.html html/*.html manual.rtf manual.txt
+
+status: checkdoc ./funclist.txt
+	./checkdoc -s > status.txt
+	./checkdoc -m > missing.txt
+
+summary: ./funcsummary.txt
+
+quickref: quickref.txt
+quickref.txt: manual.xml $(QUICKREF_DEPS)
+	$(JADE) $(CATALOG) -d $(QUICKREF_STYLESHEET) -V nochunks -t sgml $(srcdir)/phpdocxml.dcl manual.xml | sed -e 's/   */ /g' | sort -f > quickref.txt
+
+kdevelop_toc: php.toc
+php.toc: manual.xml $(KDEVELOP_TOC_DEPS)
+	echo '<!DOCTYPE gideontoc>' > $@
+	$(JADE) $(CATALOG) -d $(KDEVELOP_TOC_STYLESHEET) -V nochunks -t sgml $(srcdir)/phpdocxml.dcl manual.xml | sed -e's/\& /\&amp; /g' >> $@
+
+makedoc: $(srcdir)/makedoc.cc
+	g++ -o makedoc $(srcdir)/makedoc.cc
+
+bigmanual.html: manual.xml $(HTML_DEPS)
+	$(JADE) $(CATALOG) -V nochunks -d $(HTML_STYLESHEET) -t sgml $(srcdir)/phpdocxml.dcl manual.xml > $@
+
+bigmanual.html.gz: bigmanual.html
+	gzip -9 -c $< > $@
+
+manual.rtf.gz: manual.rtf
+	gzip -9 -c $< > $@
+
+manual.txt.gz: manual.txt
+	gzip -9 -c $< > $@
+
+manual.pdf: manual.tex
+	# a hack around bugs in jade/jadetex...
+	mv manual.tex manual.tex.tmp
+	sed -e '/HeadingText/,/endHeadPar/ s/_/\\137/g' manual.tex.tmp > manual.tex
+	rm manual.tex.tmp
+
+	-jadetex $<
+	-jadetex $<
+	-jadetex $<
+	dvipdfm -p @PDF_PAPER_TYPE@ manual.dvi
+
+html/index.html: manual.xml $(HTML_DEPS)
+	@test -d html || mkdir html
+	$(JADE) $(CATALOG) -d $(HTML_STYLESHEET) -V use-output-dir -t sgml $(srcdir)/phpdocxml.dcl manual.xml
+
+php/index.php: manual.xml $(PHPWEB_DEPS)
+	@test -d php || mkdir php
+	-$(JADE) $(CATALOG) -d $(PHPWEB_STYLESHEET) -V use-output-dir -t sgml $(srcdir)/phpdocxml.dcl manual.xml
+
+manual.txt: bigmanual.html
+	lynx -nolist -dump file:`pwd`/bigmanual.html > manual.txt
+
+manual_doc.pdb: manual.txt makedoc
+	./makedoc -b manual.txt manual_doc.pdb $(PALMDOCTITLE)
+
+# Note: Isilo converter available only in binary from www.isilo.com
+manual_isilo.pdb: bigmanual.html
+	iSilo386 bigmanual.html manual_isilo.pdb
+
+manual.zip: html/index.html
+	-rm -f $@ && (cd html; zip -9 -q ../$@ *.html)
+
+manual.tar.gz: html/index.html
+	-rm -f $@ && (cd html; tar -cf - *.html) | gzip -9 > manual.tar.gz
+
+manual.tar.bz2: html/index.html
+	-rm -f $@ && (cd html; tar -cf - *.html) | bzip2 -9 > manual.tar.bz2
+
+howto.html: $(srcdir)/howto.xml $(HOWTO_DEPS) global.ent
+	$(JADE) $(CATALOG) -d $(HOWTO_STYLESHEET) -t sgml $(srcdir)/phpdocxml.dcl $(srcdir)/howto.xml
+
+tex latex: $(srcdir)/manual.tex
+
+# File endings we are going to define general rules for:
+.SUFFIXES: .html .xml .sgml .tex .dvi .ps .rtf .pdf
+
+# General rules:
+.xml.tex:
+	$(JADE) $(CATALOG) -d $(PRINT_STYLESHEET) -t tex $(srcdir)/phpdocxml.dcl $<
+
+.xml.rtf:
+	$(JADE) $(CATALOG) -d $(PRINT_STYLESHEET) -t rtf $(srcdir)/phpdocxml.dcl $<
+
+# runs three times -
+# 1. generates the dvi with a completely bogus table of contents
+# 2. generates the dvi with a table of contents that is off based on the size
+#    of the table of contents
+# 3. generates a dvi with all the right page numbers and such
+.tex.dvi:
+	jadetex $<
+	jadetex $<
+	jadetex $<
+
+.dvi.ps:
+	dvips -o $@ $<
+
+.ps.pdf:
+	ps2pdf -p $@ $<
+
+test: manual.xml
+	$(NSGMLS) -i lang-$(LANG) -s $(srcdir)/phpdocxml.dcl $<
+
+clean:
+	rm -rf html php
+	rm -f manual.txt [a-z]*.html manual.rtf manual.info
+	rm -f manual.zip manual.tar.gz .manual.xml
+	rm -f manual_*.pdb makedoc *.manifest
+	rm -f *.aux *.tex *.log *.dvi *.toc *.ps *.gz
+	rm -f funclist.txt funcsummary.txt status.txt missing.txt checkdoc
+
+distclean: clean
+	rm -f Makefile html.dsl print.dsl checkdoc \
+	      howto.dsl manual.xml quickref.dsl common.dsl \
+	      html-locale.dsl phpweb.dsl version.ent

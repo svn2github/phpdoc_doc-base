@@ -1,0 +1,205 @@
+<!-- -*- SGML -*-
+
+ $Id$
+
+ Contains global "macros" for all the XML documents.
+
+ -->
+<!ENTITY url.adabas "http://www.adabas.com/">
+<!ENTITY url.adobe "http://www.adobe.com/">
+<!ENTITY url.apache "http://www.apache.org/">
+<!ENTITY url.apachedso "http://www.apache.org/docs/dso.html">
+<!ENTITY url.argsep "http://www.w3.org/TR/html4/appendix/notes.html#h-B.2.2">
+<!ENTITY url.aspell "http://aspell.sourceforge.net/">
+<!ENTITY url.bcmath "http://www.php.net/extra/number4.tar.gz">
+<!ENTITY url.browscap "http://php.netvision.net.il/browser-id.php3">
+<!ENTITY url.bzip2 "http://sources.redhat.com/bzip2/">
+<!ENTITY url.calendar "http://genealogy.org/~scottlee/cal-overview.html">
+<!ENTITY url.calendar.time "http://www.fortunecity.de/parkalleen/goldschmied/17/z1.htm">
+<!ENTITY url.cert "http://www.cert.org/advisories/CA-96.11.interpreters_in_cgi_bin_dir.html">
+<!ENTITY url.cdb "http://cr.yp.to/cdb.html">
+<!ENTITY url.cgispec "http://hoohoo.ncsa.uiuc.edu/cgi/env.html">
+<!ENTITY url.cgispecs "http://hoohoo.ncsa.uiuc.edu/cgi/">
+<!ENTITY url.cpdf "http://www.fastio.com/">
+<!ENTITY url.curl "http://curl.haxx.se/">
+<!ENTITY url.cybermut "http://www.creditmutuel.fr/centre_commercial/vendez_sur_internet.html">
+<!ENTITY url.dbstyle "http://nwalsh.com/docbook/dsssl/">
+<!ENTITY url.dbx.docs "http://www.guidance.nl/php/dbx/doc/">
+<!ENTITY url.docbook "http://www.ora.com/davenport/">
+<!ENTITY url.docbook.xml "http://www.nwalsh.com/docbook/xml/">
+<!ENTITY url.docbook-ref "http://www.ora.com/davenport/">
+<!ENTITY url.docbook-dtdref "http://www.ora.com/homepages/dtdparse/docbook/3.0/">
+<!ENTITY url.docbook-intro "http://nis-www.lanl.gov/~rosalia/mydocs/docbook-intro.html">
+<!ENTITY url.domxml "http://www.xmlsoft.org">
+<!ENTITY url.dsssl "http://www.jclark.com/dsssl/">
+<!ENTITY url.e-soft "http://www.e-softinc.com/survey/data/199911/news.html#modules">
+<!ENTITY url.emacs-src "ftp://ftp.gnu.org/pub/gnu/emacs-20.2.tar.gz">
+<!ENTITY url.emacs-nt "http://ftp.sunet.se/pub/os/Win32/ntEmacs/docs/ntemacs.html">
+<!ENTITY url.email.book "http://www.oreilly.com/catalog/progintemail/noframes.html">
+<!ENTITY url.expat "http://www.jclark.com/xml/">
+<!ENTITY url.expat.rpm "http://www.guardian.no/~ssb/phpxml.html">
+<!ENTITY url.fastio "http://www.fastio.com/">
+<!ENTITY url.fbsql "http://www.frontbase.com/">
+<!ENTITY url.fbsql.docs "http://www.frontbase.com/cgi-bin/WebObjects/FrontBase.woa/wa/productsPage?currentPage=Documentation">
+<!ENTITY url.filepro "http://www.fptech.com/">
+<!ENTITY url.freetype "http://www.freetype.org/">
+<!ENTITY url.freeodbc "http://users.ids.net/~bjepson/freeODBC/">
+<!ENTITY url.gd "http://www.boutell.com/gd/">
+<!ENTITY url.gdbm "ftp://ftp.gnu.org/pub/gnu/gdbm/">
+<!ENTITY url.gmp "http://www.swox.com/gmp/">
+<!ENTITY url.hyperwave "http://www.hyperwave.com/">
+<!ENTITY url.hyperwave_proto "http://www.hyperwave.de/7.17-hg-prot">
+<!ENTITY url.iicm "http://www.iicm.edu/">
+<!ENTITY url.ibase "http://www.interbase.com/">
+<!ENTITY url.ibmdb2 "http://www.ibm.com/db2/">
+<!ENTITY url.icap "http://icap.chek.com/">
+<!ENTITY url.iicm "http://iicm.edu/">
+<!ENTITY url.iiscfg "http://www.genusa.com/iis/iiscfg.html">
+<!ENTITY url.imap "ftp://ftp.cac.washington.edu/imap/">
+<!ENTITY url.imap.book "http://www.oreilly.com/catalog/mimap/noframes.html">
+<!ENTITY url.iodbc "http://www.iodbc.org/">
+<!ENTITY url.iptc "http://www.iptc.org/">
+<!ENTITY url.ircg "http://php.net/~sas/schumann.cx/ircg/">
+<!ENTITY url.jade "http://www.jclark.com/jade/">
+<!ENTITY url.jclark "http://www.jclark.com/bio.htm">
+<!ENTITY url.jpeg "ftp://ftp.uu.net/graphics/jpeg/">
+<!ENTITY url.ldap.netscape "http://developer.netscape.com/tech/directory/">
+<!ENTITY url.ldap.filters "http://developer.netscape.com/docs/manuals/directory/41/ag/find.htm">
+<!ENTITY url.ldap.michigan "http://www.umich.edu/~dirsvcs/ldap/index.html">
+<!ENTITY url.ldap.ldapworld "http://elvira.innosoft.com/ldapworld">
+<!ENTITY url.ldap.openldap "http://www.openldap.org/">
+<!ENTITY url.ldap.openldap-c-api "http://www.openldap.org/devel/cvsweb.cgi/~checkout~/doc/drafts/draft-ietf-ldapext-ldap-c-api-xx.txt">
+<!ENTITY url.levenshtein.demo "http://odur.let.rug.nl/~kleiweg/lev/">
+<!ENTITY url.lightyear "http://homepage.mac.com/LightyearDesign/MacOSX/Packages/">
+<!ENTITY url.libiconv "http://clisp.cons.org/~haible/packages-libiconv.html">
+<!ENTITY url.macosx "http://www.entropy.ch/software/macosx">
+<!ENTITY url.macosx2 "http://www.access.ch/ml/">
+<!ENTITY url.macromedia "http://www.macromedia.com/">
+<!ENTITY url.malinimg "http://www.pvv.org/~ssb/malin/bilder/mi/twain001.jpg">
+<!ENTITY url.mcal "http://mcal.chek.com/">
+<!ENTITY url.mcrypt "ftp://mcrypt.hellug.gr/pub/mcrypt/libmcrypt">
+<!ENTITY url.mersenne "http://www.math.keio.ac.jp/~matumoto/emt.html">
+<!ENTITY url.mersenne.twister "http://www.scp.syr.edu/~marc/hawk/twister.html">
+<!ENTITY url.mhash "http://mhash.sourceforge.net/">
+<!ENTITY url.ming "http://www.opaque.net/ming/">
+<!ENTITY url.mirrors "http://www.php.net/mirrors.php">
+<!ENTITY url.mnogo "http://www.mnogosearch.ru/">
+<!ENTITY url.msql "http://www.hughes.com.au/">
+<!ENTITY url.mysql "http://www.mysql.com/">
+<!ENTITY url.mysql.docs "http://www.mysql.com/documentation/">
+<!ENTITY url.mysql.docs.fr "http://dev.nexen.net/docs/mysql/">
+<!ENTITY url.netcraft "http://www.netcraft.com/">
+<!ENTITY url.netcraft-survey "http://www.netcraft.com/survey/">
+<!ENTITY url.nexen "http://www.nexen.net/">
+<!ENTITY url.nwalsh "http://nwalsh.com/">
+<!ENTITY url.nis "http://www.desy.de/~sieversm/ypdoku/ypdoku/ypdoku.html">
+<!ENTITY url.nis.book "http://www.oreilly.com/catalog/nfs/noframes.html">
+<!ENTITY url.openbsd "http://www.openbsd.org/">
+<!ENTITY url.openbsd.packages "http://www.openbsd.org/cgi-bin/man.cgi?query=packages">
+<!ENTITY url.openbsd.ports "http://www.openbsd.org/ports.html">
+<!ENTITY url.openlink "http://www.openlinksw.com/">
+<!ENTITY url.openssl "http://www.openssl.org/">
+<!ENTITY url.oracle "http://www.oracle.com/">
+<!ENTITY url.ovrimos "http://www.ovrimos.com/">
+<!ENTITY url.psgml "ftp://ftp.lysator.liu.se/pub/sgml/psgml-1.0.1.tar.gz">
+<!ENTITY url.pcre "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/">
+<!ENTITY url.pdf "http://www.pdflib.com/pdflib/index.html">
+<!ENTITY url.pdflib.merz "http://www.pdflib.com/corporate/tm.html">
+<!ENTITY url.pfpro "http://www.verisign.com/payment/">
+<!ENTITY url.pfpro.download "https://testmanager.signio.com/Downloads/Downloads_secure.htm">
+<!ENTITY url.php "http://www.php.net/">
+<!ENTITY url.php.faq "http://www.php.net/FAQ.php">
+<!ENTITY url.php.changelog "http://www.php.net/ChangeLog.php">
+<!ENTITY url.php.bugs "http://bugs.php.net/">
+<!ENTITY url.php.bugdosdonts "http://bugs.php.net/bugs-dos-and-donts.php">
+<!ENTITY url.php.cvs "http://cvs.php.net/">
+<!ENTITY url.php.docs "http://www.php.net/docs.php">
+<!ENTITY url.php.gtk "http://gtk.php.net/">
+<!ENTITY url.php.manual "http://www.php.net/manual/">
+<!-- 
+ the next entity is not used in the english version, we only
+ keep it until the other languages update their preface.xml
+-->
+<!ENTITY url.php.snaps.manual "http://snaps.php.net/manual/">
+<!ENTITY url.php.stats "../images/phpstats-200002.gif">
+<!ENTITY url.phpdoc 'http://www.phpdoc.de/'>
+<!ENTITY url.pgsql "http://www.postgresql.org/">
+<!ENTITY url.pspell "http://pspell.sourceforge.net/">
+<!ENTITY url.qmail "http://www.qmail.org/">
+<!ENTITY url.readline "http://cnswww.cns.cwru.edu/~chet/readline/rltop.html">
+<!ENTITY url.rec-xml "http://www.w3.org/TR/1998/REC-xml-19980210">
+<!ENTITY url.redhat "http://www.redhat.com/">
+<!ENTITY url.redhat.ccvs "http://www.redhat.com/products/ccvs">
+<!ENTITY url.redhat.support "http://www.redhat.com/products/ccvs/support/CCVS3.3docs/ProgPHP.html">
+<!ENTITY url.rfc  'http://www.faqs.org/rfcs/'>
+<!ENTITY url.rfc.editor  'http://www.rfc-editor.org/'>
+<!ENTITY url.rfc1950  'ftp://ftp.uu.net/pub/archiving/zip/doc/rfc1950.txt'>
+<!ENTITY url.rfc1951  'ftp://ftp.uu.net/pub/archiving/zip/doc/rfc1951.txt'>
+<!ENTITY url.rfc1952  'ftp://ftp.uu.net/pub/archiving/zip/doc/rfc1952.txt'>
+<!ENTITY url.sablotron "http://www.gingerall.com/">
+<!ENTITY url.sesam.de "http://its.siemens.de/lobs/its/techinf/oltp/sesam/manuals/index_gr.htm">
+<!ENTITY url.sesam.en "http://its.siemens.de/lobs/its/techinf/oltp/sesam/manuals/index_en.htm">
+<!ENTITY url.sleepycat "http://www.sleepycat.com/">
+<!ENTITY url.solid "http://www.solidtech.com/">
+<!ENTITY url.stepwise "http://www.stepwise.com/">
+<!ENTITY url.stepwise.macosx-server "http://www.stepwise.com/Articles/Workbench/Apache-1.3.14-MacOSXServer.html">
+<!ENTITY url.stepwise.macosx-client "http://www.stepwise.com/Articles/Workbench/Apache-1.3.14-MacOSX.html">
+<!ENTITY url.stepwise.macosx-server "http://www.stepwise.com/Articles/Workbench/Apache-1.3.14-MacOSXServer.html">
+<!ENTITY url.strnatcmp "http://www.linuxcare.com.au/projects/natsort/">
+<!ENTITY url.swf "http://reality.sgi.com/grafica/flash/">
+<!ENTITY url.swf.test "http://www.designmultimedia.com/swfphp/test.swf">
+<!ENTITY url.sybase "http://www.sybase.com/">
+<!ENTITY url.symbole_legendre "http://www.utm.edu/research/primes/glossary/LegendreSymbol.html">
+<!ENTITY url.t1lib "ftp://sunsite.unc.edu/pub/Linux/libs/graphics/">
+<!ENTITY url.tenon "http://www.tenon.com/products/webten/">
+<!ENTITY url.texinfo "http://www.texinfo.com/">
+<!ENTITY url.tiff "http://www.libtiff.org/">
+<!ENTITY url.ucd-snmp "http://ucd-snmp.ucdavis.edu/">
+<!ENTITY url.unicode "http://www.unicode.org/">
+<!ENTITY url.velocis "http://www.raima.com/">
+<!ENTITY url.win32install "http://www.umesd.k12.or.us/php/win32install.html">
+<!ENTITY url.winhelp "http://msdn.microsoft.com/library/tools/htmlhelp/chm/hh1start.htm">
+<!ENTITY url.wddx "http://www.wddx.org/">
+<!ENTITY url.xemacs "http://www.xemacs.org/">
+<!ENTITY url.xml "http://www.w3.org/XML/">
+<!ENTITY url.xslt "http://www.w3.org/TR/xslt">
+<!ENTITY url.yaz "http://www.indexdata.dk/yaz/">
+<!ENTITY url.yaz-phpyaz "http://www.indexdata.dk/phpyaz/">
+<!ENTITY url.yaz.ill "http://www.nlc-bnc.ca/iso/ill/stanprf.htm">
+<!ENTITY url.yaz.specs "http://www.nlc-bnc.ca/iso/ill/document/standard/z-ill-1a.pdf">
+<!ENTITY url.zend "http://www.zend.com/">
+<!ENTITY url.zend.mail "http://www.zend.com/zend/spotlight/sendmimeemailpart1.php">
+<!ENTITY url.zlib "http://www.info-zip.org/pub/infozip/zlib/">
+<!ENTITY url.zziplib "http://zziplib.sourceforge.net/">
+
+<!ENTITY book.applied.cryptography 'Applied Cryptography by Schneier (ISBN 0-471-11709-9)'>
+
+<!ENTITY email.rasmus   'rasmus@php.net'>
+<!ENTITY email.stig     'stig@php.net'>
+<!ENTITY email.bob      'bob_silva@mail.umesd.k12.or.us'>
+<!ENTITY email.perugini 'perugini@php.net'>
+<!ENTITY email.rafael   'rafael@viewpoint.no'>
+<!ENTITY email.dams     'damien.seguy@nexen.net'>
+<!ENTITY email.bibi     'bibi@php.net'>
+<!ENTITY email.ming     'ming@opaque.net'>
+
+<!ENTITY email.php.install           'php-install@lists.php.net'>
+<!ENTITY email.php.install.subscribe 'php-install-subscribe@lists.php.net'>
+
+<!ENTITY link.rasmus   '<ulink url="mailto:&email.rasmus;">Rasmus Lerdorf</ulink>'>
+<!ENTITY link.stig     '<ulink url="mailto:&email.stig;">Stig S&aelig;ther Bakken</ulink>'>
+<!ENTITY link.bob      '<ulink url="mailto:&email.bob;">Bob Silva</ulink>'>
+<!ENTITY link.perugini '<ulink url="mailto:&email.perugini;">Luca Perugini</ulink>'>
+<!ENTITY link.rafael   '<ulink url="mailto:&email.rafael;">Rafael Mart&iacute;nez</ulink>'>
+
+<!ENTITY spec.ftp       'http://www.faqs.org/rfcs/rfc959.html'>
+<!ENTITY spec.http1.0   'http://www.w3.org/hypertext/WWW/Protocols/HTTP1.0/draft-ietf-http-spec.html'>
+<!ENTITY spec.http1.1   'http://www.w3.org/Protocols/rfc2616/rfc2616'>
+<!ENTITY spec.cookies   'http://www.netscape.com/newsref/std/cookie_spec.html'>
+<!ENTITY spec.strftime  'http://www.opengroup.org/onlinepubs/7908799/xsh/strftime.html'>
+<!ENTITY spec.hyperwave 'http://www.hyperwave.com/7.17-hg-prot'>
+<!ENTITY spec.pdf.fdf   'http://partners.adobe.com/asn/developer/acrosdk/forms.html'>
+
+<!ENTITY true  '<constant>TRUE</constant>'>
+<!ENTITY false '<constant>FALSE</constant>'>
+<!ENTITY null  '<constant>NULL</constant>'>
